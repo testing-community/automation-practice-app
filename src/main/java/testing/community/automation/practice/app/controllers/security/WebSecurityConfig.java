@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import testing.community.automation.practice.app.controllers.security.jwt.AuthEntryPointJwt;
 import testing.community.automation.practice.app.controllers.security.jwt.AuthTokenFilter;
 import testing.community.automation.practice.app.controllers.security.services.UserDetailsServiceImpl;

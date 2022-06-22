@@ -1,23 +1,16 @@
 package testing.community.automation.practice.app.domain.model.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Random;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role {
-    private Integer id;
+    private Long id;
 
     private String name;
-
-    public Role() {
-
-    }
-
-    public Role(String name) {
-        this.id = new Random().nextInt();
-        this.name = name;
-    }
 }
