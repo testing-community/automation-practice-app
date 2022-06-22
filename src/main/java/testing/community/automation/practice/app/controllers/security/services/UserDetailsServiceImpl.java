@@ -1,35 +1,43 @@
 package testing.community.automation.practice.app.controllers.security.services;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import testing.community.automation.practice.app.domain.model.models.Role;
-import testing.community.automation.practice.app.domain.model.models.User;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import testing.community.automation.practice.app.domain.model.models.User;
+import testing.community.automation.practice.app.shared.services.IRoleService;
+import testing.community.automation.practice.app.shared.services.IUserRoleService;
+import testing.community.automation.practice.app.shared.services.IUserService;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
+
+    @Autowired
+    private IUserService userService;
+
+    @Autowired
+    private IUserRoleService userRoleService;
+
+    @Autowired
+    private IRoleService roleService;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if (username.equals("admin")) {
-            User user = new User(
-                    username,
-                    "admin@automation.com",
-                    "$2a$10$HkkcaMM6MsOp0lob/iDGIuibyve6wUKU5JQRhzCCOH45JoGSlsN9i");
-
-            Set<Role> roles = new HashSet<>();
-            Role role = new Role("User");
-            roles.add(role);
-            user.setRoles(roles);
-            return UserDetailsServiceImpl.build(user);
-
+        var userFound = userService.getUser(username);
+        if (userFound == null) {
+            return null;
         }
-        return null;
+        var user = new User(userFound.getId(), userFound.getUsername(), userFound.getEmail(), userFound.getPassword(), null, null);
+        var roles = userRoleService.getRolesByUserId(user.getId());
+        user.setRoles(new HashSet<>(roles));
+        return build(user);
     }
 
     public static UserDetailsImpl build(User user) {
@@ -39,7 +47,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 
         return new UserDetailsImpl(
-                new Random().nextLong(),
+                UUID.randomUUID().toString(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),

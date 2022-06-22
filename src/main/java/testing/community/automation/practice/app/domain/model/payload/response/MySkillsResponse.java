@@ -1,19 +1,16 @@
 package testing.community.automation.practice.app.domain.model.payload.response;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import testing.community.automation.practice.app.domain.model.models.Skill;
+
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class JwtResponse {
-    private String token;
-    private String type;
-    private String id;
+public class MySkillsResponse {
     private String username;
-    private String email;
-    private List<String> roles;
+    private List<Skill> skills;
 }

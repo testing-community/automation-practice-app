@@ -1,16 +1,18 @@
 package testing.community.automation.practice.app.controllers.security.services;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
+import java.util.Collection;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.Getter;
 
 @Getter
 public class UserDetailsImpl implements UserDetails {
 
-    private Long id;
+    private String id;
     private String username;
     private String email;
 
@@ -19,7 +21,7 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Long id, String username, String email, String password,
+    public UserDetailsImpl(String id, String username, String email, String password,
                            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;

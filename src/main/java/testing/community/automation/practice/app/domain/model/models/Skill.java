@@ -1,16 +1,16 @@
-package testing.community.automation.practice.app.controllers.dto;
-
+package testing.community.automation.practice.app.domain.model.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Skill {
-    private String id;
+    private Long id;
+
     private String name;
 }
