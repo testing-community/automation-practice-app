@@ -51,20 +51,18 @@ public class SkillService implements ISkillService {
 
     @Override
     public Skill updateSkill(Long id, Skill skill) {
-        Optional<SkillEntity> userData = skillRepository.findById(id).stream().findFirst();
-        if (!userData.isPresent()) {
-            SkillEntity updatedSkill = userData.get();
-            updatedSkill.setName(skill.getName());
-            return mapperToDomain(skillRepository.save(updatedSkill));
+        SkillEntity skillFound = skillRepository.findById(id).get();
+        if (skillFound != null) {
+            skillFound.setName(skill.getName());
+            return mapperToDomain(skillRepository.save(skillFound));
         }
         return null;
     }
 
     @Override
     public Boolean deleteSkill(Long id) {
-        Optional<SkillEntity> userData = skillRepository.findById(id).stream().findFirst();
-        if (userData.isPresent()) {
-            SkillEntity skill = userData.get();
+        SkillEntity skill = skillRepository.findById(id).get();
+        if (skill != null) {
             skillRepository.deleteById(skill.getId());
             return skillRepository.existsById(skill.getId());
         }

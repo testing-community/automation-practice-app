@@ -57,11 +57,10 @@ public class RoleService implements IRoleService {
 
     @Override
     public Role updateRole(Long id, Role role) {
-        Optional<RoleEntity> userData = roleRepository.findById(id).stream().findFirst();
-        if (!userData.isPresent()) {
-            RoleEntity updatedRole = userData.get();
-            updatedRole.setName(role.getName());
-            return mapperToDomain(roleRepository.save(updatedRole));
+        RoleEntity roleFound = roleRepository.findById(id).get();
+        if (roleFound != null) {
+            roleFound.setName(role.getName());
+            return mapperToDomain(roleRepository.save(roleFound));
         }
         return null;
     }
@@ -71,9 +70,8 @@ public class RoleService implements IRoleService {
         if (id < 4) {
             return false;
         }
-        Optional<RoleEntity> roleFound = roleRepository.findById(id).stream().findFirst();
-        if (roleFound.isPresent()) {
-            RoleEntity role = roleFound.get();
+        RoleEntity role = roleRepository.findById(id).get();
+        if (role != null) {
             roleRepository.deleteById(role.getId());
             return roleRepository.existsById(role.getId());
         }
