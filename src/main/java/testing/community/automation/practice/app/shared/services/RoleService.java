@@ -1,6 +1,7 @@
 package testing.community.automation.practice.app.shared.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +23,9 @@ public class RoleService implements IRoleService {
 
     @Override
     public Role getRole(Long id) {
-        var roleFound = roleRepository.findById(id);
+        Optional<RoleEntity> roleFound = roleRepository.findById(id);
         if (roleFound.isPresent()) {
-            var role = roleFound.get();
+            RoleEntity role = roleFound.get();
             return  new Role(role.getId(), role.getName());
         }
         return null;
@@ -56,9 +57,9 @@ public class RoleService implements IRoleService {
 
     @Override
     public Role updateRole(Long id, Role role) {
-        var userData = roleRepository.findById(id).stream().findFirst();
+        Optional<RoleEntity> userData = roleRepository.findById(id).stream().findFirst();
         if (!userData.isPresent()) {
-            var updatedRole = userData.get();
+            RoleEntity updatedRole = userData.get();
             updatedRole.setName(role.getName());
             return mapperToDomain(roleRepository.save(updatedRole));
         }
@@ -70,9 +71,9 @@ public class RoleService implements IRoleService {
         if (id < 4) {
             return false;
         }
-        var roleFound = roleRepository.findById(id).stream().findFirst();
+        Optional<RoleEntity> roleFound = roleRepository.findById(id).stream().findFirst();
         if (roleFound.isPresent()) {
-            var role = roleFound.get();
+            RoleEntity role = roleFound.get();
             roleRepository.deleteById(role.getId());
             return roleRepository.existsById(role.getId());
         }

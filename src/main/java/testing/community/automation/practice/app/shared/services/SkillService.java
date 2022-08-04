@@ -1,6 +1,7 @@
 package testing.community.automation.practice.app.shared.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class SkillService implements ISkillService {
 
     @Override
     public Skill getSkill(Long id) {
-        var skill = skillRepository.findById(id);
+        Optional<SkillEntity> skill = skillRepository.findById(id);
         if (skill.isPresent()) {
             return  mapperToDomain(skill.get());
         }
@@ -50,9 +51,9 @@ public class SkillService implements ISkillService {
 
     @Override
     public Skill updateSkill(Long id, Skill skill) {
-        var userData = skillRepository.findById(id).stream().findFirst();
+        Optional<SkillEntity> userData = skillRepository.findById(id).stream().findFirst();
         if (!userData.isPresent()) {
-            var updatedSkill = userData.get();
+            SkillEntity updatedSkill = userData.get();
             updatedSkill.setName(skill.getName());
             return mapperToDomain(skillRepository.save(updatedSkill));
         }
@@ -61,9 +62,9 @@ public class SkillService implements ISkillService {
 
     @Override
     public Boolean deleteSkill(Long id) {
-        var userData = skillRepository.findById(id).stream().findFirst();
+        Optional<SkillEntity> userData = skillRepository.findById(id).stream().findFirst();
         if (userData.isPresent()) {
-            var skill = userData.get();
+            SkillEntity skill = userData.get();
             skillRepository.deleteById(skill.getId());
             return skillRepository.existsById(skill.getId());
         }

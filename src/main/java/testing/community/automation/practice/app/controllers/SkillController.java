@@ -1,6 +1,7 @@
 package testing.community.automation.practice.app.controllers;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.constraints.Max;
@@ -43,9 +44,9 @@ public class SkillController {
         final int size = offset.get() > 10 ? 10 : offset.get();
         final int start = page.get() * size;
 
-        var skills = skillService.getAllSkills();
+        List<Skill> skills = skillService.getAllSkills();
 
-        final var totalElements = skills.size();
+        final int totalElements = skills.size();
 
         if (totalElements < start) {
             return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
@@ -60,7 +61,7 @@ public class SkillController {
 
     @GetMapping("{id}")
     public ResponseEntity<?> getSkill(@PathVariable("id") Long id) {
-        var skill = skillService.getSkill(id);
+        Skill skill = skillService.getSkill(id);
         if (skill != null) {
             return new ResponseEntity<>(skill, HttpStatus.OK);
         }
@@ -69,9 +70,9 @@ public class SkillController {
 
     @GetMapping("mine")
     public ResponseEntity<?> getMySkills(@RequestHeader("Authorization") String bearerToken) {
-        var token = bearerToken.split(" ")[1];
-        var username = jwtUtils.getUserNameFromJwtToken(token);
-        var skills = userSkillService.getSkillsByUsername(username);
+        String token = bearerToken.split(" ")[1];
+        String username = jwtUtils.getUserNameFromJwtToken(token);
+        List<Skill> skills = userSkillService.getSkillsByUsername(username);
 
         return new ResponseEntity<>(new MySkillsResponse(username, skills), HttpStatus.OK);
     }
@@ -79,7 +80,7 @@ public class SkillController {
     @PostMapping
     public ResponseEntity<?> createSkill(@RequestBody Skill skill) {
         try {
-            var skillCreated = skillService.createSkill(skill);
+            Skill skillCreated = skillService.createSkill(skill);
             return new ResponseEntity<>(skillCreated, HttpStatus.CREATED);
         } catch (Exception e) {
             if (e instanceof AlreadyExistException) {
@@ -91,7 +92,7 @@ public class SkillController {
 
     @PutMapping("{id}")
     public ResponseEntity<?> updateSkill(@PathVariable("id") Long id, @RequestBody Skill skill) {
-        var skillUpdated = skillService.updateSkill(id, skill);
+        Skill skillUpdated = skillService.updateSkill(id, skill);
         if (skillUpdated != null) {
             return new ResponseEntity<>(skillUpdated, HttpStatus.OK);
         }
@@ -100,7 +101,7 @@ public class SkillController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteSkill(@PathVariable("id") Long id) {
-        var skillDeleted = skillService.deleteSkill(id);
+        Boolean skillDeleted = skillService.deleteSkill(id);
         if (skillDeleted) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

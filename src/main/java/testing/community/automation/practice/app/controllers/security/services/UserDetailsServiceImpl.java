@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import testing.community.automation.practice.app.domain.model.models.Role;
 import testing.community.automation.practice.app.domain.model.models.User;
 import testing.community.automation.practice.app.shared.services.IRoleService;
 import testing.community.automation.practice.app.shared.services.IUserRoleService;
@@ -30,12 +31,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var userFound = userService.getUser(username);
+        User userFound = userService.getUser(username);
         if (userFound == null) {
             return null;
         }
-        var user = new User(userFound.getId(), userFound.getUsername(), userFound.getEmail(), userFound.getPassword(), null, null);
-        var roles = userRoleService.getRolesByUserId(user.getId());
+        User user = new User(userFound.getId(), userFound.getUsername(), userFound.getEmail(), userFound.getPassword(), null, null);
+        List<Role> roles = userRoleService.getRolesByUserId(user.getId());
         user.setRoles(new HashSet<>(roles));
         return build(user);
     }
