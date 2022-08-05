@@ -2,6 +2,7 @@ package testing.community.automation.practice.app.shared.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import testing.community.automation.practice.app.db.model.RoleEntity;
 import testing.community.automation.practice.app.db.model.UserRoleEntity;
 import testing.community.automation.practice.app.db.repository.IRoleRepository;
 import testing.community.automation.practice.app.db.repository.IUserRoleRepository;
@@ -38,11 +40,11 @@ public class UserRoleService implements IUserRoleService {
 
     @Override
     public List<Role> getRolesByUserId(Long userid) {
-        var roles = new ArrayList<Role>();
+        ArrayList<Role> roles = new ArrayList<Role>();
         userRoleRepository.findByUserId(userid).forEach((userRole) -> {
-            var roleFound = roleRepository.findById(userRole.getRoleId());
+            Optional<RoleEntity> roleFound = roleRepository.findById(userRole.getRoleId());
             if (roleFound.isPresent()) {
-                var role = roleFound.get();
+                RoleEntity role = roleFound.get();
                 roles.add(new Role(role.getId(), role.getName()));
             }
         });
@@ -54,7 +56,7 @@ public class UserRoleService implements IUserRoleService {
     @SneakyThrows
     public UserRole createUserRole(UserRole userRole) {
         try {
-            var userRoleFound = userRoleRepository.findByUserIdAndRoleId(userRole.getUserId(), userRole.getRoleId());
+            List<UserRoleEntity> userRoleFound = userRoleRepository.findByUserIdAndRoleId(userRole.getUserId(), userRole.getRoleId());
             if (!userRoleFound.isEmpty()) {
                 throw new AlreadyExistException("User already have the role");
             }
@@ -67,7 +69,7 @@ public class UserRoleService implements IUserRoleService {
 
     @Override
     public UserRole updateUserRole(Long id, UserRole userRole) {
-        var userRoleData = userRoleRepository.findById(id);
+        Optional<UserRoleEntity> userRoleData = userRoleRepository.findById(id);
         if (!userRoleData.isPresent()) {
             UserRoleEntity updatedUserRole = userRoleData.get();
             updatedUserRole.setRoleId(userRole.getRoleId());
@@ -79,7 +81,7 @@ public class UserRoleService implements IUserRoleService {
 
     @Override
     public Boolean deleteUserRole(Long id) {
-        var userData = userRoleRepository.findById(id);
+        Optional<UserRoleEntity> userData = userRoleRepository.findById(id);
         if (userData.isPresent()) {
             UserRoleEntity userRole = userData.get();
             userRoleRepository.deleteById(userRole.getId());

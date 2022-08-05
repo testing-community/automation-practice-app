@@ -4,6 +4,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import testing.community.automation.practice.app.db.model.SkillEntity;
+import testing.community.automation.practice.app.db.model.UserEntity;
 import testing.community.automation.practice.app.db.model.UserSkillEntity;
 import testing.community.automation.practice.app.db.repository.ISkillRepository;
 import testing.community.automation.practice.app.db.repository.IUserRepository;
@@ -14,6 +16,7 @@ import testing.community.automation.practice.app.shared.exceptions.AlreadyExistE
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service("userSkillService")
@@ -41,15 +44,15 @@ public class UserSkillService implements IUserSkillService {
 
     @Override
     public List<Skill> getSkillsByUsername(String username) {
-        var userFound = userRepository.findByUsername(username);
+        List<UserEntity> userFound = userRepository.findByUsername(username);
         if (userFound.isEmpty() || userFound.size() > 1) {
             return null;
         }
         List<Skill> skills = new ArrayList<>();
         userSkillRepository.findByUserId(userFound.get(0).getId()).forEach((userSkill) -> {
-            var skillFound = skillRepository.findById(userSkill.getSkillId());
+            Optional<SkillEntity> skillFound = skillRepository.findById(userSkill.getSkillId());
             if (skillFound.isPresent()) {
-                var skill = skillFound.get();
+                SkillEntity skill = skillFound.get();
                 skills.add(new Skill(skill.getId(), skill.getName()));
             }
         });
@@ -61,7 +64,7 @@ public class UserSkillService implements IUserSkillService {
     @SneakyThrows
     public UserSkill createUserSkill(UserSkill userSkill) {
         try {
-            var userSkillFound = userSkillRepository.findByUserIdAndSkillId(userSkill.getUserId(), userSkill.getSkillId());
+            List<UserSkillEntity> userSkillFound = userSkillRepository.findByUserIdAndSkillId(userSkill.getUserId(), userSkill.getSkillId());
             if (!userSkillFound.isEmpty()) {
                 throw new AlreadyExistException("User already have the role");
             }
@@ -74,7 +77,7 @@ public class UserSkillService implements IUserSkillService {
 
     @Override
     public UserSkill updateUserSkill(Long id, UserSkill userSkill) {
-        var userSkillData = userSkillRepository.findById(id);
+        Optional<UserSkillEntity> userSkillData = userSkillRepository.findById(id);
         if (!userSkillData.isPresent()) {
             UserSkillEntity updatedUserRole = userSkillData.get();
             updatedUserRole.setSkillId(userSkill.getSkillId());
@@ -86,7 +89,7 @@ public class UserSkillService implements IUserSkillService {
 
     @Override
     public Boolean deleteUserSkill(Long id) {
-        var userData = userSkillRepository.findById(id);
+        Optional<UserSkillEntity> userData = userSkillRepository.findById(id);
         if (userData.isPresent()) {
             UserSkillEntity userSkill = userData.get();
             userSkillRepository.deleteById(userSkill.getId());

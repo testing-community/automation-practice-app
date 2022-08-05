@@ -1,6 +1,7 @@
 package testing.community.automation.practice.app.shared.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class UserService implements IUserService {
 
     @Override
     public User getUser(String username) {
-        var user = userRepository.findByUsername(username).stream().findFirst();
+        Optional<UserEntity> user = userRepository.findByUsername(username).stream().findFirst();
         if (user.isPresent()) {
             return  mapperToDomain(user.get());
         }
@@ -52,7 +53,7 @@ public class UserService implements IUserService {
 
     @Override
     public User updateUser(String username, User user) {
-        var userData = userRepository.findByUsername(username).stream().findFirst();
+        Optional<UserEntity> userData = userRepository.findByUsername(username).stream().findFirst();
         if (!userData.isPresent()) {
             UserEntity updatedUser = userData.get();
             updatedUser.setEmail(user.getEmail());
@@ -68,7 +69,7 @@ public class UserService implements IUserService {
         if (username.equals("admin")) {
             return false;
         }
-        var userData = userRepository.findByUsername(username).stream().findFirst();
+        Optional<UserEntity> userData = userRepository.findByUsername(username).stream().findFirst();
         if (userData.isPresent()) {
             UserEntity user = userData.get();
             userRepository.deleteById(user.getId());

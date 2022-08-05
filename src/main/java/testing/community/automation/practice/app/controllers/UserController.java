@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import testing.community.automation.practice.app.db.enumerable.RoleEnum;
+import testing.community.automation.practice.app.domain.model.models.Role;
 import testing.community.automation.practice.app.domain.model.models.User;
 import testing.community.automation.practice.app.domain.model.models.UserRole;
 import testing.community.automation.practice.app.domain.model.payload.response.ErrorResponse;
@@ -13,6 +14,8 @@ import testing.community.automation.practice.app.shared.exceptions.AlreadyExistE
 import testing.community.automation.practice.app.shared.services.IRoleService;
 import testing.community.automation.practice.app.shared.services.IUserRoleService;
 import testing.community.automation.practice.app.shared.services.IUserService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("users")
@@ -32,13 +35,13 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<?> getUsers() {
-        var users = userService.getAllUsers();
+        List<User> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("{username}")
     public ResponseEntity<?> getUser(@PathVariable("username") String username) {
-        var user = userService.getUser(username);
+        User user = userService.getUser(username);
         if (user != null) {
             return new ResponseEntity<>(user, HttpStatus.OK);
         }
@@ -49,8 +52,8 @@ public class UserController {
     public ResponseEntity<?> createUser(@RequestBody User user) {
         try {
             //For the next line we need to ensure Role table already have the values
-            var role = roleService.getRoleByName(RoleEnum.MODERATOR.getValue()).get(0);
-            var userCreated = userService.createUser(user);
+            Role role = roleService.getRoleByName(RoleEnum.MODERATOR.getValue()).get(0);
+            User userCreated = userService.createUser(user);
             userRoleService.createUserRole(new UserRole(0L, userCreated.getId(), role.getId()));
             return new ResponseEntity<>(userCreated, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -63,7 +66,7 @@ public class UserController {
 
     @PutMapping("{username}")
     public ResponseEntity<?> updateUser(@PathVariable("username") String username, @RequestBody User user) {
-        var userUpdated = userService.updateUser(username, user);
+        User userUpdated = userService.updateUser(username, user);
         if (userUpdated != null) {
             return new ResponseEntity<>(userUpdated, HttpStatus.OK);
         }
@@ -72,7 +75,7 @@ public class UserController {
 
     @DeleteMapping("{username}")
     public ResponseEntity<?> deleteUser(@PathVariable("username") String username) {
-        var userDeleted = userService.deleteUser(username);
+        Boolean userDeleted = userService.deleteUser(username);
         if (userDeleted) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

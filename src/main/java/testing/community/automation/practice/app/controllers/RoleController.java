@@ -9,6 +9,8 @@ import testing.community.automation.practice.app.domain.model.payload.response.E
 import testing.community.automation.practice.app.shared.exceptions.AlreadyExistException;
 import testing.community.automation.practice.app.shared.services.IRoleService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("roles")
 public class RoleController {
@@ -18,13 +20,13 @@ public class RoleController {
 
     @GetMapping
     public ResponseEntity<?> getRoles() {
-        var roles = roleService.getAllRoles();
+        List<Role> roles = roleService.getAllRoles();
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<?> getRole(@PathVariable("id") Long id) {
-        var role = roleService.getRole(id);
+        Role role = roleService.getRole(id);
         if (role != null) {
             return new ResponseEntity<>(role, HttpStatus.OK);
         }
@@ -34,7 +36,7 @@ public class RoleController {
     @PostMapping
     public ResponseEntity<?> createRole(@RequestBody Role role) {
         try {
-            var roleCreated = roleService.createRole(role);
+            Role roleCreated = roleService.createRole(role);
             return new ResponseEntity<>(roleCreated, HttpStatus.CREATED);
         } catch (Exception e) {
             if (e instanceof AlreadyExistException) {
@@ -46,7 +48,7 @@ public class RoleController {
 
     @PutMapping("{id}")
     public ResponseEntity<?> updateRole(@PathVariable("id") Long id, @RequestBody Role role) {
-        var roleUpdated = roleService.updateRole(id, role);
+        Role roleUpdated = roleService.updateRole(id, role);
         if (roleUpdated != null) {
             return new ResponseEntity<>(roleUpdated, HttpStatus.OK);
         }
@@ -55,7 +57,7 @@ public class RoleController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteRole(@PathVariable("id") Long id) {
-        var roleDeleted = roleService.deleteRole(id);
+        Boolean roleDeleted = roleService.deleteRole(id);
         if (roleDeleted) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

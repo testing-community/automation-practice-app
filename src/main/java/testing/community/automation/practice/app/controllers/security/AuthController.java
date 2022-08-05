@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import testing.community.automation.practice.app.controllers.security.jwt.JwtUtils;
 import testing.community.automation.practice.app.controllers.security.services.UserDetailsImpl;
 import testing.community.automation.practice.app.db.enumerable.RoleEnum;
+import testing.community.automation.practice.app.domain.model.models.Role;
 import testing.community.automation.practice.app.domain.model.models.User;
 import testing.community.automation.practice.app.domain.model.models.UserRole;
 import testing.community.automation.practice.app.domain.model.payload.request.LoginRequest;
@@ -77,14 +78,14 @@ public class AuthController {
 
     @PostMapping("signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        var user = new User(0L, signUpRequest.getUsername(),
+        User user = new User(0L, signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()), null, null);
 
         try {
             //For the next line we need to ensure Role table already have the values
-            var role = roleService.getRoleByName(RoleEnum.USER.getValue()).get(0);
-            var userCreated = userService.createUser(user);
+            Role role = roleService.getRoleByName(RoleEnum.USER.getValue()).get(0);
+            User userCreated = userService.createUser(user);
             userRoleService.createUserRole(new UserRole(0L, userCreated.getId(), role.getId()));
             return new ResponseEntity<>(userCreated, HttpStatus.CREATED);
         } catch (Exception e) {
