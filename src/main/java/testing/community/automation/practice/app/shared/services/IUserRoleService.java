@@ -1,6 +1,7 @@
 package testing.community.automation.practice.app.shared.services;
 
 import java.util.List;
+import java.util.Set;
 
 import testing.community.automation.practice.app.domain.model.models.Role;
 import testing.community.automation.practice.app.domain.model.models.UserRole;
@@ -13,4 +14,5 @@ public interface IUserRoleService {
     UserRole createUserRole(UserRole userRole);
     UserRole updateUserRole(Long id, UserRole userRole);
     Boolean deleteUserRole(Long id);
+    Set<UserRole> createUserRoles(Long userId, Set<Role> roles);
 }

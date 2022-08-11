@@ -1,17 +1,23 @@
 package testing.community.automation.practice.app.shared.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import testing.community.automation.practice.app.db.model.RoleEntity;
 import testing.community.automation.practice.app.db.model.UserEntity;
-import testing.community.automation.practice.app.db.repository.IUserRepository;
-import testing.community.automation.practice.app.domain.model.models.User;
+import testing.community.automation.practice.app.db.model.UserSkillEntity;
+import testing.community.automation.practice.app.db.repository.*;
+import testing.community.automation.practice.app.domain.model.models.*;
+import testing.community.automation.practice.app.domain.model.payload.request.UpdateUserRequest;
 import testing.community.automation.practice.app.shared.exceptions.AlreadyExistException;
 
 @Service("userService")
@@ -20,6 +26,21 @@ public class UserService implements IUserService {
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private IUserRoleRepository userRoleRepository;
+
+    @Autowired
+    private IUserSkillRepository userSkillRepository;
+
+    @Autowired
+    private ISkillRepository skillRepository;
+
+    @Autowired
+    private IRoleRepository roleRepository;
+
+    @Autowired
+    private PasswordEncoder encoder;
 
     @Override
     public User getUser(String username) {
@@ -38,13 +59,14 @@ public class UserService implements IUserService {
     @Override
     @SneakyThrows
     public User createUser(User user) {
+        String passwordEncoded = encoder.encode(user.getPassword());
         try {
             if (!userRepository.findByUsername(user.getUsername()).isEmpty()) {
                 throw new AlreadyExistException(String.format("Username %s already in use", user.getUsername()));
             } else if (!userRepository.findByEmail(user.getEmail()).isEmpty()) {
                 throw new AlreadyExistException(String.format("Email %s already in use", user.getEmail()));
             }
-            userRepository.save(new UserEntity(user.getEmail(), user.getUsername(), user.getPassword()));
+            userRepository.save(new UserEntity(user.getEmail(), user.getUsername(), passwordEncoded));
             return mapperToDomain(userRepository.findByUsername(user.getUsername()).get(0));
         } catch (Exception ex) {
             throw ex;
@@ -52,13 +74,17 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User updateUser(String username, User user) {
+    public User updateUser(String username, UpdateUserRequest updateUserRequest) {
+        String passwordEncoded = updateUserRequest.getPassword() == null || updateUserRequest.getPassword().isEmpty() ?
+                "" : encoder.encode(updateUserRequest.getPassword());
         Optional<UserEntity> userData = userRepository.findByUsername(username).stream().findFirst();
-        if (!userData.isPresent()) {
+        if (userData.isPresent()) {
             UserEntity updatedUser = userData.get();
-            updatedUser.setEmail(user.getEmail());
-            updatedUser.setPassword(user.getPassword());
-            updatedUser.setUsername(user.getUsername());
+            updatedUser.setEmail(updateUserRequest.getEmail());
+            updatedUser.setPassword(passwordEncoded.isEmpty() ? updatedUser.getPassword() : passwordEncoded);
+            updatedUser.setUsername(updateUserRequest.getUsername());
+            UserRoleService.updateUserRoles(userRoleRepository, roleRepository, updatedUser.getId(), updateUserRequest.getRoles());
+            UserSkillService.updateUserSkills(userSkillRepository, skillRepository, updatedUser.getId(), updateUserRequest.getSkills());
             return mapperToDomain(userRepository.save(updatedUser));
         }
         return null;

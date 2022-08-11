@@ -4,6 +4,7 @@ import testing.community.automation.practice.app.domain.model.models.Skill;
 import testing.community.automation.practice.app.domain.model.models.UserSkill;
 
 import java.util.List;
+import java.util.Set;
 
 public interface IUserSkillService {
 

@@ -1,8 +1,6 @@
 package testing.community.automation.practice.app.shared.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +38,7 @@ public class UserRoleService implements IUserRoleService {
 
     @Override
     public List<Role> getRolesByUserId(Long userid) {
-        ArrayList<Role> roles = new ArrayList<Role>();
+        ArrayList<Role> roles = new ArrayList<>();
         userRoleRepository.findByUserId(userid).forEach((userRole) -> {
             Optional<RoleEntity> roleFound = roleRepository.findById(userRole.getRoleId());
             if (roleFound.isPresent()) {
@@ -85,9 +83,33 @@ public class UserRoleService implements IUserRoleService {
         if (userData.isPresent()) {
             UserRoleEntity userRole = userData.get();
             userRoleRepository.deleteById(userRole.getId());
-            return userRoleRepository.existsById(userRole.getId());
+            return !userRoleRepository.existsById(userRole.getId());
         }
         return false;
+    }
+
+    @Override
+    public Set<UserRole> createUserRoles(Long userId, Set<Role> roles) {
+        Set<UserRole> userRolesUpdated = new HashSet<>();
+        roles.forEach(role -> {
+            userRolesUpdated.add(createUserRole(new UserRole(0L, userId, role.getId())));
+        });
+        return userRolesUpdated;
+    }
+
+    public static List<UserRole> updateUserRoles(IUserRoleRepository userRoleRepository, IRoleRepository roleRepository, Long userId, Set<Role> roles) {
+        List<UserRole> userRoles = new ArrayList<>();
+        if (!roles.isEmpty()) {
+            List<UserRoleEntity> userRolesFound = userRoleRepository.findByUserId(userId);
+            userRolesFound.forEach(userRoleFound -> userRoleRepository.deleteById(userRoleFound.getId()));
+            roles.forEach(roleUpdate -> {
+                RoleEntity role = roleRepository.findByName(roleUpdate.getName()).get(0);
+                if (role != null) {
+                    userRoleRepository.save(new UserRoleEntity(userId, role.getId()));
+                }
+            });
+        }
+        return userRoles;
     }
 
     private UserRole mapperToDomain(UserRoleEntity userRoleEntity){
