@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,12 +13,9 @@ import org.springframework.stereotype.Service;
 
 import testing.community.automation.practice.app.db.model.UserEntity;
 import testing.community.automation.practice.app.db.repository.IUserRepository;
-import testing.community.automation.practice.app.db.repository.IUserRoleRepository;
 import testing.community.automation.practice.app.domain.model.models.Role;
 import testing.community.automation.practice.app.domain.model.models.User;
 import testing.community.automation.practice.app.shared.services.IUserRoleService;
-import testing.community.automation.practice.app.shared.services.IUserService;
-import testing.community.automation.practice.app.shared.services.UserService;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {

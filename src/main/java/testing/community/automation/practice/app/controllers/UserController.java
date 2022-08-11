@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import testing.community.automation.practice.app.db.enumerable.RoleEnum;
 import testing.community.automation.practice.app.domain.model.models.Role;
 import testing.community.automation.practice.app.domain.model.models.User;
-import testing.community.automation.practice.app.domain.model.models.UserRole;
 import testing.community.automation.practice.app.domain.model.payload.request.SignupRequest;
 import testing.community.automation.practice.app.domain.model.payload.request.UpdateUserRequest;
 import testing.community.automation.practice.app.domain.model.payload.response.ErrorResponse;

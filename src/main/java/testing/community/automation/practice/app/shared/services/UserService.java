@@ -1,9 +1,7 @@
 package testing.community.automation.practice.app.shared.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +10,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import testing.community.automation.practice.app.db.model.RoleEntity;
 import testing.community.automation.practice.app.db.model.UserEntity;
-import testing.community.automation.practice.app.db.model.UserSkillEntity;
 import testing.community.automation.practice.app.db.repository.*;
 import testing.community.automation.practice.app.domain.model.models.*;
 import testing.community.automation.practice.app.domain.model.payload.request.UpdateUserRequest;
