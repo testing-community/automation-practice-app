@@ -64,7 +64,7 @@ public class SkillService implements ISkillService {
         SkillEntity skill = skillRepository.findById(id).get();
         if (skill != null) {
             skillRepository.deleteById(skill.getId());
-            return skillRepository.existsById(skill.getId());
+            return !skillRepository.existsById(skill.getId());
         }
         return false;
     }

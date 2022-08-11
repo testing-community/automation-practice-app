@@ -1,5 +1,6 @@
 package testing.community.automation.practice.app.domain.model.payload.request;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.constraints.Email;
@@ -21,7 +22,7 @@ public class SignupRequest {
     @Email
     private String email;
 
-    private Set<String> role;
+    private Set<String> role = new HashSet<>();
 
     @NotBlank
     @Size(min = 6, max = 40)

@@ -17,6 +17,7 @@ import testing.community.automation.practice.app.shared.exceptions.AlreadyExistE
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service("userSkillService")
@@ -93,9 +94,24 @@ public class UserSkillService implements IUserSkillService {
         if (userData.isPresent()) {
             UserSkillEntity userSkill = userData.get();
             userSkillRepository.deleteById(userSkill.getId());
-            return userSkillRepository.existsById(userSkill.getId());
+            return !userSkillRepository.existsById(userSkill.getId());
         }
         return false;
+    }
+
+    public static List<UserSkill> updateUserSkills(IUserSkillRepository userSkillRepository, ISkillRepository skillRepository, Long userId, Set<Skill> skills) {
+        List<UserSkill> userSkills = new ArrayList<>();
+        if (!skills.isEmpty()) {
+            List<UserSkillEntity> userSkillsFound = userSkillRepository.findByUserId(userId);
+            userSkillsFound.forEach(userSkillFound -> userSkillRepository.deleteById(userSkillFound.getId()));
+            skills.forEach(skillUpdate -> {
+                SkillEntity skill = skillRepository.findByName(skillUpdate.getName()).get(0);
+                if (skill != null) {
+                    userSkillRepository.save(new UserSkillEntity(userId, skill.getId()));
+                }
+            });
+        }
+        return userSkills;
     }
 
     private UserSkill mapperToDomain(UserSkillEntity userSkillEntity){

@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,30 +12,31 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import testing.community.automation.practice.app.db.model.UserEntity;
+import testing.community.automation.practice.app.db.repository.IUserRepository;
+import testing.community.automation.practice.app.db.repository.IUserRoleRepository;
 import testing.community.automation.practice.app.domain.model.models.Role;
 import testing.community.automation.practice.app.domain.model.models.User;
-import testing.community.automation.practice.app.shared.services.IRoleService;
 import testing.community.automation.practice.app.shared.services.IUserRoleService;
 import testing.community.automation.practice.app.shared.services.IUserService;
+import testing.community.automation.practice.app.shared.services.UserService;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private IUserService userService;
+    private IUserRepository userRepository;
 
     @Autowired
     private IUserRoleService userRoleService;
 
-    @Autowired
-    private IRoleService roleService;
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User userFound = userService.getUser(username);
-        if (userFound == null) {
+        List<UserEntity> usersFound = userRepository.findByUsername(username);
+        if (usersFound.isEmpty()) {
             return null;
         }
+        UserEntity userFound = usersFound.get(0);
         User user = new User(userFound.getId(), userFound.getUsername(), userFound.getEmail(), userFound.getPassword(), null, null);
         List<Role> roles = userRoleService.getRolesByUserId(user.getId());
         user.setRoles(new HashSet<>(roles));

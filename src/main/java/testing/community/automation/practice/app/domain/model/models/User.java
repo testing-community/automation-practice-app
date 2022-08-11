@@ -39,4 +39,11 @@ public class User {
 
     @JsonIgnore
     private Set<Skill> skills = new HashSet<>();
+
+    public User(String username, String password, String email, Set<Role> roles) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.roles = roles;
+    }
 }
