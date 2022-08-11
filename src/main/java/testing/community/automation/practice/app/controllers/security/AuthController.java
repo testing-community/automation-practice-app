@@ -29,6 +29,7 @@ import testing.community.automation.practice.app.domain.model.payload.request.Si
 import testing.community.automation.practice.app.domain.model.payload.response.ErrorResponse;
 import testing.community.automation.practice.app.domain.model.payload.response.JwtResponse;
 import testing.community.automation.practice.app.shared.exceptions.AlreadyExistException;
+import testing.community.automation.practice.app.shared.exceptions.NoDataAvailableInDatabaseException;
 import testing.community.automation.practice.app.shared.services.IRoleService;
 import testing.community.automation.practice.app.shared.services.IUserRoleService;
 import testing.community.automation.practice.app.shared.services.IUserService;
@@ -78,13 +79,17 @@ public class AuthController {
 
     @PostMapping("signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        String defaultRole = RoleEnum.USER.getValue();
         User user = new User(0L, signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()), null, null);
 
         try {
-            //For the next line we need to ensure Role table already have the values
-            Role role = roleService.getRoleByName(RoleEnum.USER.getValue()).get(0);
+            List<Role> rolesFounded = roleService.getRoleByName(defaultRole);
+            if (rolesFounded.isEmpty()) {
+                throw new NoDataAvailableInDatabaseException(String.format("Contact support - Role table has no the value needed %s", defaultRole));
+            }
+            Role role = rolesFounded.get(0);
             User userCreated = userService.createUser(user);
             userRoleService.createUserRole(new UserRole(0L, userCreated.getId(), role.getId()));
             return new ResponseEntity<>(userCreated, HttpStatus.CREATED);
