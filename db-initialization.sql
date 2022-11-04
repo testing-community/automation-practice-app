@@ -29,8 +29,8 @@ INSERT INTO test_schema.userskill(
 CREATE TABLE test_schema.userskill
 (
 id			numeric,
-skillid		varchar(255),
-userid		varchar(255)
+skillid		numeric,
+userid		numeric
 );
 
 CREATE TABLE test_schema.user
@@ -50,8 +50,8 @@ name		varchar(255)
 CREATE TABLE test_schema.userrole
 (
 id			numeric,
-roleid		varchar(255),
-userid		varchar(255)
+roleid		numeric,
+userid		numeric
 );
 
 CREATE TABLE test_schema.skill
@@ -59,3 +59,7 @@ CREATE TABLE test_schema.skill
 id			numeric,
 name		varchar(255)
 );
+
+-- DROPS
+
+DROP TABLE test_schema.user, test_schema.role, test_schema.skill, test_schema.userrole, test_schema.userskill;
