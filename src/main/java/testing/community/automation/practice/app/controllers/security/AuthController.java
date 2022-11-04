@@ -45,9 +45,6 @@ public class AuthController {
     private JwtUtils jwtUtils;
 
     @Autowired
-    private PasswordEncoder encoder;
-
-    @Autowired
     private IUserService userService;
 
     @Autowired
@@ -82,7 +79,7 @@ public class AuthController {
         String defaultRole = RoleEnum.USER.getValue();
         User user = new User(0L, signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()), null, null);
+                signUpRequest.getPassword(), null, null);
 
         try {
             List<Role> rolesFounded = roleService.getRoleByName(defaultRole);
